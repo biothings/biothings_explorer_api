@@ -8,7 +8,6 @@ ht = Hint()
 class HintHandler(BaseHandler):
     def get(self):
         _input = self.get_query_argument('q', None)
-        print(_input)
         if _input:
             result = ht.query(_input)
             self.set_status(200)
