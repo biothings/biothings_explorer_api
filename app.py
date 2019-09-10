@@ -10,9 +10,9 @@ from handlers.connect_handler import ConnectHandler
 class Application(tornado.web.Application):
     def __init__(self):
         handlers = [
-            (r"/api/v1/hint", HintHandler),
-            (r"/api/v1/find_edge", SchemaHandler),
-            (r"/api/v1/connect", ConnectHandler)
+            (r"/explorer_kgs/api/v1/hint", HintHandler),
+            (r"/explorer_kgs/api/v1/find_edge", SchemaHandler),
+            (r"/explorer_kgs/api/v1/connect", ConnectHandler)
         ]
 
         tornado.web.Application.__init__(self, handlers)
