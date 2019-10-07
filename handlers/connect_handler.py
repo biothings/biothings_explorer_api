@@ -1,31 +1,31 @@
 import json
-from networkx.readwrite import json_graph
+import ast
 from .base import BaseHandler
 from biothings_explorer.registry import Registry
-from biothings_explorer.connect import ConnectTwoConcepts
+from biothings_explorer.user_query_dispatcher import Connect
+from biothings_explorer.networkx_helper import networkx_json_to_visjs
 
 reg = Registry()
 
 
 class ConnectHandler(BaseHandler):
     def get(self):
-        _input = self.get_query_argument('input', None)
-        _output = self.get_query_argument('output', None)
-        input_cls, input_id, input_v = _input.split('.')
-        output_cls, output_id, output_v = _output.split('.')
-        # restructure input as a dict
-        rest_input = {'type': input_cls,
-                      'identifier': 'bts:' + input_id,
-                      'values': input_v}
-        # restructure output as a dict
-        rest_output = {'type': output_cls,
-                       'identifier': 'bts:' + output_id,
-                       'values': output_v}
-        ctc = ConnectTwoConcepts(rest_input, rest_output,
-                                 edge1=None, edge2=None,
-                                 registry=reg)
+        _input = self.get_query_argument('input')
+        _output = self.get_query_argument('output')
+        steps = self.get_query_argument('steps', 2)
+        _format = self.get_query_argument('format', None)
+        if type(_input) == str:
+            _input = ast.literal_eval(_input)
+        if type(_output) == str:
+            _output = ast.literal_eval(_output)
+        ctc = Connect(input_obj=_input,
+                      output_obj=_output,
+                      max_steps=steps,
+                      registry=reg)
         ctc.connect()
-        res = json_graph.node_link_data(ctc.G)
+        res = ctc.to_json()
+        if _format == "visjs":
+            res = networkx_json_to_visjs(res)
         if res:
             self.set_status(200)
             self.write(json.dumps(res))
