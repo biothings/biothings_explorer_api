@@ -1,6 +1,7 @@
 from biothings_explorer.user_query_dispatcher import SingleEdgeQueryDispatcher
 from biothings_explorer.user_query_dispatcher import MultiEdgeQueryDispatcher
 from biothings_explorer.registry import Registry
+from biothings_explorer.networkx_helper import networkx_json_to_visjs
 from networkx.readwrite import json_graph
 import json
 import ast
@@ -40,7 +41,7 @@ class SingleHopQueryHandler(BaseHandler):
         res = json_graph.node_link_data(seqd.G)
         if res:
             self.set_status(200)
-            self.write(json.dumps(res))
+            self.write(json.dumps(networkx_json_to_visjs(res)))
             self.finish()
             return
 
