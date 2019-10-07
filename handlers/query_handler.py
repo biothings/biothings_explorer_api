@@ -19,8 +19,14 @@ class SingleHopQueryHandler(BaseHandler):
         pred = self.get_query_argument('predicate', None)
         if input_obj:
             input_obj = ast.literal_eval(input_obj)
-        _id, _value = input_id.split(':', 1)
-        _id = "bts:" + _id
+        if output_cls:
+            output_cls = ast.literal_eval(output_cls)
+        if input_id:
+            _id, _value = input_id.split(':', 1)
+            _id = "bts:" + _id
+        else:
+            _id = None,
+            _value = None
         print(input_cls, _id, input_obj, output_cls, output_id, pred, _value)
         seqd = SingleEdgeQueryDispatcher(input_cls=input_cls,
                                          input_id=_id,
