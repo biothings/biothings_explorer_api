@@ -21,7 +21,7 @@ class SingleHopQueryHandler(BaseHandler):
         if input_obj:
             input_obj = ast.literal_eval(input_obj)
         if output_cls:
-            output_cls = ast.literal_eval(output_cls)
+            output_cls = ast.literal_eval(output_cls)[0]
         if input_id:
             _id, _value = input_id.split(':', 1)
             _id = "bts:" + _id
