@@ -9,10 +9,14 @@ class HintHandler(BaseHandler):
     def get(self):
         _input = self.get_query_argument('q', None)
         if _input:
-            result = ht.query(_input)
-            self.set_status(200)
-            self.write(json.dumps(result))
-            self.finish()
+            try:
+                result = ht.query(_input)
+                self.set_status(200)
+                self.write(json.dumps(result))
+                self.finish()
+            except:
+                self.set_status(400)
+                self.write(json.dumps({'error': 'No input is found'}))
         else:
             self.set_status(400)
-            self.write(json.dumps({'No input is found'}))
+            self.write(json.dumps({'error': 'No input is found'}))

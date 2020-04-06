@@ -1,34 +1,36 @@
 import json
 import ast
+import pandas as pd
+import tornado.escape
+from urllib.parse import parse_qs
 from .base import BaseHandler
 from biothings_explorer.registry import Registry
-from biothings_explorer.user_query_dispatcher import Connect
-from biothings_explorer.networkx_helper import networkx_json_to_visjs
+from biothings_explorer.user_query_dispatcher import FindConnection
 
 reg = Registry()
 
-
 class ConnectHandler(BaseHandler):
     def get(self):
-        _input = self.get_query_argument('input')
-        _output = self.get_query_argument('output')
-        steps = self.get_query_argument('steps', 2)
-        _format = self.get_query_argument('format', None)
-        if type(_input) == str:
-            _input = ast.literal_eval(_input)
-        if type(_output) == str:
-            _output = ast.literal_eval(_output)
-        ctc = Connect(input_obj=_input,
-                      output_obj=_output,
-                      max_steps=steps,
-                      registry=reg)
-        ctc.connect()
-        res = ctc.to_json()
-        if _format == "visjs":
-            res = networkx_json_to_visjs(res)
+        input_obj = self.get_query_argument('input_obj')
+        output_obj = self.get_query_argument('output_obj')
+        print("executing connect query: ", self.request.uri)
+        intermediate_nodes = self.get_query_argument('intermediate_nodes')
+        if type(input_obj) == str:
+            input_obj = tornado.escape.json_decode(input_obj)
+        if type(output_obj) == str:
+            output_obj = tornado.escape.json_decode(output_obj)
+        if type(intermediate_nodes) == str:
+            intermediate_nodes = ast.literal_eval(intermediate_nodes)
+        fc = FindConnection(input_obj=input_obj,
+                            output_obj=output_obj,
+                            intermediate_nodes=intermediate_nodes,
+                            registry=reg)
+        fc.connect()
+        df = fc.display_table_view()
+        res = df.to_dict('records')
         if res:
             self.set_status(200)
-            self.write(json.dumps(res))
+            self.write(tornado.escape.json_encode({'data': res}))
             self.finish()
             return
         else:
