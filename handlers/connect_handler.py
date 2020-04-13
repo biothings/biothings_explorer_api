@@ -30,7 +30,7 @@ class ConnectHandler(BaseHandler):
         res = df.to_dict('records')
         if res:
             self.set_status(200)
-            self.write(tornado.escape.json_encode({'data': res, 'log': df.df.log}))
+            self.write(tornado.escape.json_encode({'data': res, 'log': fc.fc.log}))
             self.finish()
             return
         else:
