@@ -29,7 +29,7 @@ class MetaPathHandler(BaseHandler):
                 tmp_path += [output_cls]
                 result.append(tmp_path)
         if result:
-            result = [','.join(item) for item in result]
+            result = ['-'.join(item) for item in result]
             self.set_status(200)
             self.write(json.dumps({'edges': result,
                                    'source': input_cls,
