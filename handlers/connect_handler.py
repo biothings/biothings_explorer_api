@@ -27,6 +27,8 @@ class ConnectHandler(BaseHandler):
                             registry=reg)
         fc.connect()
         df = fc.display_table_view()
+        df = df[['input', 'pred1', 'pred1_api', 'node1_name', 'node1_type', 'pred2', 'pred2_api', 'output_name']]
+        df.drop_duplicates(inplace=True)
         res = df.to_dict('records')
         if res:
             self.set_status(200)
