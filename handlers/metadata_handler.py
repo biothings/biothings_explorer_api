@@ -61,3 +61,27 @@ class EdgeFilterHandler(BaseHandler):
         self.set_status(200)
         self.write(json.dumps(final_res))
         self.finish()
+
+class DetailedAssociationsHandler(BaseHandler):
+    def get(self):
+        res = {'associations': []}
+        for sbj_id,  obj_id, assoc in md.registry.G.edges(data=True):
+            tmp = {
+                'subject': {
+                    'identifier': sbj_id,
+                    'semantic_type': assoc['input_type']
+                },
+                'object': {
+                    'identifier': obj_id,
+                    'semantic_type': assoc['output_type']
+                },
+                'predicate': {
+                    'api': assoc['api'],
+                    'source': assoc['source'],
+                    'label': assoc['label']
+                }
+            }
+            res['associations'].append(tmp)
+        self.set_status(200)
+        self.write(json.dumps(res))
+        self.finish()
