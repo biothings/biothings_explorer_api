@@ -18,8 +18,6 @@ class MetaPathHandler(BaseHandler):
         if input_connects:    
             for group, _ in groupby(sorted(input_connects, key=grouper), grouper):
                 tmp[group].append([input_cls, group])
-                if group == output_cls:
-                    result.append([input_cls, output_cls])
         for intermediate_node, tmp_paths in tmp.items():
             intermediate_connects = reg.filter_edges(input_cls=intermediate_node,
                                                      output_cls=output_cls)
