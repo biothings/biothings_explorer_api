@@ -1,5 +1,6 @@
 from biothings_explorer.metadata import Metadata
 from biothings_explorer.config import metadata
+from .config import smartapi_map
 import json
 from .base import BaseHandler
 
@@ -85,7 +86,8 @@ class DetailedAssociationsHandler(BaseHandler):
                         'name': metadata[assoc['api']]['api_name'],
                         'smartapi': {
                             'ui': "http://smart-api.info/ui/" + metadata[assoc['api']]['smart_api_id'],
-                            'yaml': "http://smart-api.info/api/metadata/" + metadata[assoc['api']]['smart_api_id']
+                            'url': "http://smart-api.info/api/metadata/" + metadata[assoc['api']]['smart_api_id'],
+                            'metadata': smartapi_map[metadata[assoc['api']]['smart_api_id']]
                         }
                     }
                 }
