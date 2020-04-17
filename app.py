@@ -17,7 +17,7 @@ class Application(tornado.web.Application):
             (r"/explorer_api/v1/find_metapath", MetaPathHandler),
             (r"/explorer_api/v1/semantictypes", SemanticTypesHandler),
             (r"/explorer_api/v1/predicates", PredicatesHandler),
-            (r"/explorer_api/v1/associations", AssociationsHandler),
+            (r"/explorer_api/v1/associations", DetailedAssociationsHandler),
             (r"/explorer_api/v1/idtypes", IDTypesHandler),
             (r"/explorer_api/v1/filter_edges", EdgeFilterHandler),
             (r"/explorer_api/v1/connect", ConnectHandler)
