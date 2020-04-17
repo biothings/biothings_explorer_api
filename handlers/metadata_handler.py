@@ -1,4 +1,5 @@
 from biothings_explorer.metadata import Metadata
+from biothings_explorer.config import metadata
 import json
 from .base import BaseHandler
 
@@ -66,22 +67,29 @@ class DetailedAssociationsHandler(BaseHandler):
     def get(self):
         res = {'associations': []}
         for sbj_id,  obj_id, assoc in md.registry.G.edges(data=True):
-            tmp = {
-                'subject': {
-                    'identifier': sbj_id,
-                    'semantic_type': assoc['input_type']
-                },
-                'object': {
-                    'identifier': obj_id,
-                    'semantic_type': assoc['output_type']
-                },
-                'predicate': {
-                    'api': assoc['api'],
-                    'source': assoc['source'],
-                    'label': assoc['label']
+            if "smart_api_id" in metadata[assoc['api']]:
+                tmp = {
+                    'subject': {
+                        'identifier': sbj_id,
+                        'semantic_type': assoc['input_type']
+                    },
+                    'object': {
+                        'identifier': obj_id,
+                        'semantic_type': assoc['output_type']
+                    },
+                    'predicate': {
+                        'source': assoc['source'],
+                        'label': assoc['label']
+                    },
+                    'api': {
+                        'name': metadata[assoc['api']]['api_name'],
+                        'smartapi': {
+                            'ui': "http://smart-api.info/ui/" + metadata[assoc['api']]['smart_api_id'],
+                            'yaml': "http://smart-api.info/api/metadata/" + metadata[assoc['api']]['smart_api_id']
+                        }
+                    }
                 }
-            }
-            res['associations'].append(tmp)
+                res['associations'].append(tmp)
         self.set_status(200)
         self.write(json.dumps(res))
         self.finish()
