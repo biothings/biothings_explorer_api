@@ -1,10 +1,11 @@
 from biothings_explorer.metadata import Metadata
 from biothings_explorer.config import metadata
-from .config import smartapi_map
+from biothings_explorer.registry import Registry
 import json
 from .base import BaseHandler
 
 md = Metadata()
+reg = Registry()
 
 
 class SemanticTypesHandler(BaseHandler):
@@ -67,31 +68,28 @@ class EdgeFilterHandler(BaseHandler):
 class DetailedAssociationsHandler(BaseHandler):
     def get(self):
         res = {'associations': []}
-        for sbj_id,  obj_id, assoc in md.registry.G.edges(data=True):
-            if "smart_api_id" in metadata[assoc['api']]:
-                tmp = {
-                    'subject': {
-                        'identifier': sbj_id,
-                        'semantic_type': assoc['input_type']
-                    },
-                    'object': {
-                        'identifier': obj_id,
-                        'semantic_type': assoc['output_type']
-                    },
-                    'predicate': {
-                        'source': assoc['source'],
-                        'label': assoc['label']
-                    },
-                    'api': {
-                        'name': metadata[assoc['api']]['api_name'],
-                        'smartapi': {
-                            'ui': "http://smart-api.info/ui/" + metadata[assoc['api']]['smart_api_id'],
-                            'url': "http://smart-api.info/registry?q=" + metadata[assoc['api']]['smart_api_id'],
-                            'metadata': smartapi_map[metadata[assoc['api']]['smart_api_id']]
-                        }
+        for sbj_id,  obj_id, assoc in reg.G.edges(data=True):
+            tmp = {
+                'subject': {
+                    'identifier': sbj_id,
+                    'semantic_type': assoc['input_type']
+                },
+                'object': {
+                    'identifier': obj_id,
+                    'semantic_type': assoc['output_type']
+                },
+                'predicate': {
+                    'source': assoc['operation'].get('source'),
+                    'label': assoc['label']
+                },
+                'api': {
+                    'name': assoc['operation']["api_name"],
+                    'smartapi': {
+                        'url': "http://smart-api.info/registry?q=" + assoc['operation']["api_name"],
                     }
                 }
-                res['associations'].append(tmp)
+            }
+            res['associations'].append(tmp)
         self.set_status(200)
         self.write(json.dumps(res))
         self.finish()
